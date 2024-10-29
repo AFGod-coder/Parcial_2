@@ -23,9 +23,7 @@ public class VehicleController {
 
     // ADMINISTRADOR: Crear un nuevo vehículo
     @PostMapping("/new")
-    public ResponseEntity<Vehicle> createVehicle(@RequestBody Vehicle vehicle, @RequestParam Integer userId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User  not found"));
-
+    public ResponseEntity<Vehicle> createVehicle(@RequestBody Vehicle vehicle) {
         // Validaciones lógicas
         if (vehicle.getLicensePlate() == null || vehicle.getLicensePlate().length() > 6) {
             return ResponseEntity.badRequest().body(null); // Bad Request
@@ -37,19 +35,25 @@ public class VehicleController {
 
     // ADMINISTRADOR: Modificar vehículo
     @PutMapping("/{id}")
-    public ResponseEntity<Vehicle> updateVehicle(@PathVariable Integer id, @RequestBody Vehicle vehicle, @RequestParam Integer userId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User  not found"));
+    public ResponseEntity<Vehicle> updateVehicle(
+            @PathVariable Integer id,
+            @RequestBody Vehicle vehicle) {
 
-        Vehicle existingVehicle = vehicleRepository.findById(id).orElseThrow(() -> new RuntimeException("Vehicle not found"));
+        // Buscar el vehículo existente
+        Vehicle existingVehicle = vehicleRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Vehicle not found"));
 
         // Validaciones lógicas
         if (vehicle.getLicensePlate() == null || vehicle.getLicensePlate().length() > 6) {
             return ResponseEntity.badRequest().body(null); // Bad Request
         }
 
+        // Actualizar los campos del vehículo existente
         existingVehicle.setLicensePlate(vehicle.getLicensePlate());
         existingVehicle.setLocation(vehicle.getLocation());
         existingVehicle.setVehicleType(vehicle.getVehicleType());
+
+        // Guardar y devolver el vehículo actualizado
         return ResponseEntity.ok(vehicleRepository.save(existingVehicle));
     }
 

@@ -1,0 +1,49 @@
+-- Eliminar la base de datos si ya existe
+DROP DATABASE IF EXISTS dbparcial;
+
+-- Crear la base de datos
+CREATE DATABASE dbparcial;
+
+-- Usar la base de datos recién creada
+USE dbparcial;
+
+-- Crear tabla 'role'
+CREATE TABLE IF NOT EXISTS role (
+    role_id INT AUTO_INCREMENT PRIMARY KEY,
+    role_name VARCHAR(255) NOT NULL
+);
+
+-- Crear tabla 'user'
+CREATE TABLE IF NOT EXISTS user (
+    user_id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(255) NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL
+);
+
+-- Crear tabla 'vehicle_types'
+CREATE TABLE IF NOT EXISTS vehicle_types (
+    vehicle_type_id INT AUTO_INCREMENT PRIMARY KEY,
+    type_name VARCHAR(255) NOT NULL UNIQUE
+);
+
+-- Crear tabla 'vehicles'
+CREATE TABLE IF NOT EXISTS vehicles (
+    vehicle_id INT AUTO_INCREMENT PRIMARY KEY,
+    license_plate VARCHAR(6) NOT NULL UNIQUE,
+    entry_time DATETIME NOT NULL,
+    exit_time DATETIME,
+    location VARCHAR(255) NOT NULL,
+    vehicle_type_id INT NOT NULL,
+    FOREIGN KEY (vehicle_type_id) REFERENCES vehicle_types(vehicle_type_id)
+);
+
+-- Crear tabla 'user_roles'
+CREATE TABLE IF NOT EXISTS user_roles (
+    user_id INT NOT NULL,
+    role_id INT NOT NULL,
+    granted_date DATETIME,
+    PRIMARY KEY (user_id, role_id),
+    FOREIGN KEY (user_id) REFERENCES user(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (role_id) REFERENCES role(role_id) ON DELETE CASCADE
+);
